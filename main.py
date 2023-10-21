@@ -7,7 +7,13 @@
 #   User input information (major)/algorithm more likely to see similar schedules
 #   What schedules you see are weighted based on college and major
 #   Scrape UT registration for upcoming semester schedule
-
+class Student:
+    def __init__(firstName, lastName, major, classification, minor)
+        self.__firstName = firstName
+        self.__lastName = lastName
+        self.__major = major
+        self.__classification = classification
+        self.__minor = minor
 
 # Class Variables:
 #   First Name, Last Name, UT EID --> If we only get their EID, UT Directory can get first and last name
