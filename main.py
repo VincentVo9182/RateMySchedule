@@ -7,14 +7,32 @@
 #   User input information (major)/algorithm more likely to see similar schedules
 #   What schedules you see are weighted based on college and major
 #   Scrape UT registration for upcoming semester schedule
-class Student:
-    def __init__(firstName, lastName, major, classification, minor)
-        self.__firstName = firstName
-        self.__lastName = lastName
-        self.__major = major
-        self.__classification = classification
-        self.__minor = minor
+import streamlit as st
+from student import Student  # Import Student class from student.py
 
+def main():
+    st.title("Student Data Entry Form")
+
+    students = []
+
+    first_name = st.text_input("First Name")
+    last_name = st.text_input("Last Name")
+    eid = st.text_input("EID")
+    major = st.text_input("Major")
+    classification = st.selectbox("Classification", ["Freshman", "Sophomore", "Junior", "Senior"])
+    minor = st.text_input("Minor")
+
+    if st.button("Submit"):
+        new_student = Student(first_name, last_name, eid, major, classification, minor)
+        students.append(new_student)
+
+    st.header("Existing Student Profiles")
+
+    for student in students:
+        st.subheader(student)
+
+if __name__ == "__main__":
+    main()
 # Class Variables:
 #   First Name, Last Name, UT EID --> If we only get their EID, UT Directory can get first and last name
 #   Classification (Year) and Major can be found on UT Directory using EID --> Can we implement this?
