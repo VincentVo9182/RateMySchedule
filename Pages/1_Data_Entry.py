@@ -1,11 +1,8 @@
 import streamlit as st
-from student import Student  # Import Student class from student.py
+import student  # Import Student class from student.py
 
-def main():
+def data_entry_page():
     st.title("Student Data Entry Form")
-
-    students = []
-
     first_name = st.text_input("First Name")
     last_name = st.text_input("Last Name")
     eid = st.text_input("EID")
@@ -14,13 +11,9 @@ def main():
     minor = st.text_input("Minor")
 
     if st.button("Submit"):
-        new_student = Student(first_name, last_name, eid, major, classification, minor)
-        students.append(new_student)
-
-    st.header("Existing Student Profiles")
-
-    for student in students:
-        st.subheader(student)
+        new_student = student.Student(first_name, last_name, eid, major, classification, minor)
+        st.session_state.new_student = new_student  # Store the new student in session_state
+        st.experimental_rerun()  # Rerun the Streamlit app to trigger redirection
 
 if __name__ == "__main__":
-    main()
+    data_entry_page()
