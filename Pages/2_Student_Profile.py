@@ -41,26 +41,25 @@ def student_profile_page():
 
     # Edit Profile section with styling
     st.markdown("<div style='" + header_style + "'>Edit Profile</div>", unsafe_allow_html=True)
-    with st.container():
-        st.markdown("<h3>Edit Your Profile</h3>", unsafe_allow_html=True)
-        edit_profile(new_student)
-
-def edit_profile(student):
-    first_name = st.text_input("First Name", student.first_name)
-    last_name = st.text_input("Last Name", student.last_name)
-    eid = st.text_input("EID", student.eid)
-    major = st.text_input("Major", student.major)
+    first_name = st.text_input("First Name", new_student.first_name)
+    last_name = st.text_input("Last Name", new_student.last_name)
+    eid = st.text_input("EID", new_student.eid)
+    major = st.text_input("Major", new_student.major)
     classification = st.selectbox("Classification", ["Freshman", "Sophomore", "Junior", "Senior"], index=2)  # Default to "Junior"
-    minor = st.text_input("Minor", student.minor)
+    minor = st.text_input("Minor", new_student.minor)
 
     if st.button("Save Changes"):
-        # Update the student object with the modified information
-        student.first_name = first_name
-        student.last_name = last_name
-        student.eid = eid
-        student.major = major
-        student.classification = classification
-        student.minor = minor
+        if not first_name or not last_name or not eid or not major:
+            st.error("Please fill out all the required fields.")
+        else:
+            # Update the student object with the modified information
+            new_student.first_name = first_name
+            new_student.last_name = last_name
+            new_student.eid = eid
+            new_student.major = major
+            new_student.classification = classification
+            new_student.minor = minor
+            st.experimental_rerun()
 
 def display_student_profile(student):
     st.write(f"**Name**: {student.first_name} {student.last_name}")
