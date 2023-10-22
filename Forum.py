@@ -1,113 +1,145 @@
-# import streamlit as st
-# from sidebar import manage_sidebar
-# import student
-
-# # Initialize upvote and downvote counts for comments
-# upvote_counts = {}
-# downvote_counts = {}
-
-# if 'uploaded_title' not in st.session_state:
-#     st.session_state.uploaded_title = ""
-# if 'uploaded_image' not in st.session_state:
-#     st.session_state.uploaded_image = None
-
-# # Sidebar management
-# manage_sidebar()
-
-# student = st.session_state.new_student
-
-# # Check if content has been posted
-# if 'posted' in st.session_state:
-#     # Create an empty container at the top of the page
-#     top_container = st.empty()
-
-#     # Display the uploaded title as a string on the main page
-#     uploaded_title = st.session_state.uploaded_title
-#     top_container.write(f"{uploaded_title}")
-    
-#     if 'uploaded_images' in st.session_state:
-#         for image in st.session_state.uploaded_images:
-#             st.image(image, width=300)
-#             comment_key = f"comments_{image}"
-#             if comment_key not in st.session_state:
-#                 st.session_state[comment_key] = []
-
-#             user_comment = st.text_input("Write a comment for this image", key=f"comment_input_{image}")
-#             post_comment_button_key = f"post_comment_button_{image}"
-#             if st.button("Post Comment", key=post_comment_button_key):
-#                 if user_comment:
-#                     st.session_state[comment_key].append(user_comment)
-#                     user_comment = ""
-
-#             # Display the comments for this image
-#             st.subheader("Comments")
-#             for comment in st.session_state[comment_key]:
-#                 name = student.get_first_name()
-#                 major = student.get_major()
-#                 year = student.get_classification()
-#                 fstring = f'<span style="color: gray; font-weight: bold;">{name}</span> [{major}][{year}]: {comment}'
-#                 st.markdown(fstring, unsafe_allow_html=True)
 import streamlit as st
-from sidebar import manage_sidebar
-import student
 
-# Initialize upvote and downvote counts for comments
-upvote_counts = {}
-downvote_counts = {}
+# Define CSS styles
+header_style = """
+    background-color: #E65100;
+    color: white;
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+"""
 
-if 'uploaded_title' not in st.session_state:
-    st.session_state.uploaded_title = ""
-if 'uploaded_image' not in st.session_state:
-    st.session_state.uploaded_image = None
+post_title_style = """
+    font-size: 20px;
+    font-weight: bold;
+"""
 
-# Sidebar management
-manage_sidebar()
+post_style = """
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 20px;
+"""
 
-student = st.session_state.new_student
+rating_style = """
+    font-size: 20px;
+    font-weight: bold;
+"""
 
-# Check if content has been posted
-if 'posted' in st.session_state:
-    # Create an empty container at the top of the page
-    top_container = st.empty()
+comment_header_style = """
+    font-size: 18px;
+    font-weight: bold;
+"""
 
-    # Display the uploaded title as a string on the main page
-    uploaded_title = st.session_state.uploaded_title
-    top_container.write(f"{uploaded_title}")
+comment_style = """
+    font-size: 14px;
+"""
 
-    if 'uploaded_images' in st.session_state:
-        for image in st.session_state.uploaded_images:
-            st.image(image, width=300)
-            comment_key = f"comments_{image}"
-            if comment_key not in st.session_state:
-                st.session_state[comment_key] = []
+section_style = """
+    margin: 20px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+"""
 
-            user_comment = st.text_input("Write a comment for this image", key=f"comment_input_{image}")
-            post_comment_button_key = f"post_comment_button_{image}"
-            if st.button("Post Comment", key=post_comment_button_key):
+divider = """
+    text-align: center
+"""
+
+def Forum_page():
+    # Initialize a list to store user posts
+    if 'user_posts' not in st.session_state:
+        st.session_state.user_posts = []
+
+    # Sidebar portion, allow the user to make a post
+    st.sidebar.title("Post your Schedule")
+
+    uploaded_title = st.sidebar.text_input("Post Title (Don't forget to include your major and year!)")
+    uploaded_image = st.sidebar.file_uploader("Upload your Class Schedule (jpg, png, or pdf please!)", type=["jpg", "png", "jpeg", "pdf"])
+
+    if st.sidebar.button("Post"):
+        if uploaded_image:
+            post = {
+                "title": uploaded_title,
+                "image": uploaded_image,
+                "rating": 0,
+                "comments": [],
+            }
+            st.session_state.user_posts.insert(0, post)  # Insert the post at the beginning of the list
+
+    # Main page portion
+    # Header with styling
+    st.markdown("<div style='" + header_style + "'>RateMySchedule Forum</div>", unsafe_allow_html=True)
+    st.write("")
+    # Display the user posts in reverse order (most recent first)
+    for i, post in enumerate(st.session_state.user_posts):
+        post_id = f"post_{i}"
+        comments_key = f"comments_{post_id}"
+
+        st.markdown(f"<div style='{post_title_style}'>{post['title']}</div>", unsafe_allow_html=True)
+        st.write("")
+        st.image(post["image"], use_column_width=True, caption="Uploaded Schedule")
+        
+        # Create buttons for upvoting and downvoting to update post rating
+        post_upvote_button_key = f"post_upvote_button_{i}"
+        if st.button(f"Upvote", key=post_upvote_button_key) and post["rating"] < 1:
+            post["rating"] += 1
+
+
+        post_downvote_button_key = f"post_downvote_button_{i}"
+        if st.button(f"Downvote", key=post_downvote_button_key) and post["rating"] > -1:
+            post["rating"] -= 1
+
+        st.markdown(f"<div style='{rating_style}'>Post Rating: {post['rating']}</div>", unsafe_allow_html=True)
+
+        # Display comments under the post
+        st.markdown("<div style='" + comment_header_style + "'>Comments</div>", unsafe_allow_html=True)
+        for comment in post["comments"]:
+            st.markdown(f"<div style='{comment_style}'>{comment}</div>", unsafe_allow_html=True)
+                                     
+        if 'new_student' not in st.session_state:
+            st.error("Please create a student profile before you can comment.")
+        # Text input for posting comments
+        else:
+            user_comment = st.text_input("Write a comment for this post", key=comments_key)
+            post_comment_button_key = f"post_comment_button_{i}"
+
+            if st.button(f"Post Comment", key=post_comment_button_key):
                 if user_comment:
-                    st.session_state[comment_key].append(user_comment)
-                    user_comment = ""
+                    post["comments"].append(st.session_state.new_student.get_first_name() + " [" +
+                                                                   st.session_state.new_student.get_major() + "][" + 
+                                                                   st.session_state.new_student.get_classification() + "]: " + 
+                                                                   user_comment)
+                    user_comment = ""  # Clear the input field after posting
+                st.experimental_rerun()   
+        st.markdown("<div style='" + divider + "'>______________________________________________________________________________</div>", unsafe_allow_html=True)
+        st.write("")
 
-            # Display the comments and upvote/downvote buttons for this image
-            st.subheader("Comments")
-            for comment_id, comment in enumerate(st.session_state[comment_key]):
-                upvote_button_key = f"upvote_button_{comment_key}_{comment_id}"
-                downvote_button_key = f"downvote_button_{comment_key}_{comment_id}"
-                if upvote_button_key not in upvote_counts:
-                    upvote_counts[upvote_button_key] = 0
-                if downvote_button_key not in downvote_counts:
-                    downvote_counts[downvote_button_key] = 0
+if __name__ == "__main__":
+    Forum_page()
 
-                name = student.get_first_name()
-                major = student.get_major()
-                year = student.get_classification()
-                fstring = f'<span style="color: gray; font-weight: bold;">{name}</span> [{major}][{year}]: {comment}'
-                st.markdown(fstring, unsafe_allow_html=True)
+navigation = '''
+<style>
+    [data-testid="stSidebarNav"] {
+        background-image: url(https://i.ibb.co/sPwZpRS/RMS.png);
+        background-repeat: no-repeat;
+        background-position: 0px 0px;
+        background-size: 100%;
+    }
+    [data-testid='stSidebarNav'] > ul {
+        min-height: 45vh;
+    }
+</style>
+'''
+sidebar = '''
+<style>
+    [data-testid=stSidebar] {
+    }
+</style>
+'''
 
-                upvote_count = st.button(f"Upvote ({upvote_counts[upvote_button_key]})", key=upvote_button_key)
-                downvote_count = st.button(f"Downvote ({downvote_counts[downvote_button_key]})", key=downvote_button_key)
-                
-                if upvote_count:
-                    upvote_counts[upvote_button_key] += 1
-                if downvote_count:
-                    downvote_counts[downvote_button_key] += 1
+st.markdown(navigation, unsafe_allow_html=True)
+st.markdown(sidebar, unsafe_allow_html=True)

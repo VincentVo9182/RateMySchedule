@@ -1,6 +1,24 @@
 import streamlit as st
 import Student
 
+# Define CSS styles
+header_style = """
+    background-color: #E65100;
+    color: white;
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+"""
+
+section_style = """
+    margin: 20px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+"""
+
 # Initialize dict1 using st.session_state
 if 'dict1' not in st.session_state:
     st.session_state.dict1 = {}
@@ -10,7 +28,9 @@ if 'optedIn' not in st.session_state:
     st.session_state.optedIn = []
 
 def matching_page():
-    st.title("Buddy Finder")
+    student = st.session_state.new_student
+    st.markdown("<div style='" + header_style + "'>Buddy Finder</div>", unsafe_allow_html=True)
+    st.write("")
     uniqueNumber = st.text_input("Enter unique number to OPT IN")
 
     if st.button("Submit"):
@@ -43,8 +63,30 @@ def matching_page():
 
 
 if __name__ == "__main__":
-    student = st.session_state.new_student
-    if student.get_eid() == "":
+    if 'new_student' not in st.session_state:
         st.error("Please create a student profile first.")
     else:
         matching_page()
+
+navigation = '''
+<style>
+    [data-testid="stSidebarNav"] {
+        background-image: url(https://i.ibb.co/sPwZpRS/RMS.png);
+        background-repeat: no-repeat;
+        background-position: 0px 0px;
+        background-size: 100%;
+    }
+    [data-testid='stSidebarNav'] > ul {
+        min-height: 45vh;
+    }
+</style>
+'''
+sidebar = '''
+<style>
+    [data-testid=stSidebar] {
+    }
+</style>
+'''
+
+st.markdown(navigation, unsafe_allow_html=True)
+st.markdown(sidebar, unsafe_allow_html=True)
