@@ -1,5 +1,5 @@
 import streamlit as st
-from student import Student
+from Student import Student
 
 # Define CSS styles
 header_style = """
@@ -21,26 +21,19 @@ section_style = """
 
 def student_profile_page():
     st.image("RMS.png", width=300)
-    st.title("Student Profile")
     
     if 'new_student' not in st.session_state:
         st.session_state.new_student = Student("", "", "", "", "", "")
 
     new_student = st.session_state.new_student
-
     # Header with styling
     st.markdown("<div style='" + header_style + "'>Student Profile</div>", unsafe_allow_html=True)
+    display_student_profile(new_student)  # Display the profile at the top
 
-    # Display the student profile
-    with st.container():
-        st.markdown("<h3>Profile Information</h3>", unsafe_allow_html=True)
-        display_student_profile(new_student)
-
-    # Add a visual separation
+    # Add a visual separation and style the "Edit Profile" section
     st.markdown("<hr style='margin: 10px;'>", unsafe_allow_html=True)
-
-    # Edit Profile section with styling
     st.markdown("<div style='" + header_style + "'>Edit Profile</div>", unsafe_allow_html=True)
+
     first_name = st.text_input("First Name", new_student.first_name)
     last_name = st.text_input("Last Name", new_student.last_name)
     eid = st.text_input("EID", new_student.eid)
@@ -60,6 +53,8 @@ def student_profile_page():
             new_student.classification = classification
             new_student.minor = minor
             st.experimental_rerun()
+            
+
 
 def display_student_profile(student):
     st.write(f"**Name**: {student.first_name} {student.last_name}")
@@ -69,4 +64,8 @@ def display_student_profile(student):
     st.write(f"**Minor**: {student.minor}")
 
 if __name__ == "__main__":
-    student_profile_page()
+    new_student = st.session_state.new_student
+    if new_student.get_eid() == "":
+        st.error("Please create a student profile first.")
+    else:
+        student_profile_page()
