@@ -2,6 +2,7 @@ import streamlit as st
 import student  # Import Student class from student.py
 
 def data_entry_page():
+    st.image("RMS.png", width=300)
     st.title("Student Data Entry Form")
     first_name = st.text_input("First Name")
     last_name = st.text_input("Last Name")
